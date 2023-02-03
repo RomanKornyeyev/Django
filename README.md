@@ -40,7 +40,6 @@ export PATH
 ### PYTHON (TODO LO NECESARIO)
 Sin root, da igual la carpeta:
 ```
-sudo apt-get install mysql-server
 sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 sudo apt-get install python3-dev default-libmysqlclient-dev libzstd-dev
 pip install mysqlclient
