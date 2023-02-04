@@ -55,6 +55,7 @@ django-admin startproject mysite
 cd mysite
 python manage.py runserver (lo ejecutamos al mismo nivel que manage.py)
 ```
+
 Esto nos dejará el siguiente árbol:
 <pre>
 mysite/
@@ -71,6 +72,7 @@ Paramos el server con ctrl+c y ejecutamos este comando:
 ```
 python manage.py startapp polls (lo ejecutamos al mismo nivel que manage.py)
 ```
+
 **Creamos nuestra primera vista (hola mundo)**
 copiamos y pegamos esto en views:
 ```
@@ -81,8 +83,8 @@ from django.http import HttpResponse
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 ```
-Para llamar a esta vista, NECESITAMOS MAPEAR ESTO A UNA URL. Creamos un urls.py en polls, con lo que nos queda esta jerarquía:
 
+Para llamar a esta vista, NECESITAMOS MAPEAR ESTO A UNA URL. Creamos un urls.py en polls, con lo que nos queda esta jerarquía:
 <pre>
 polls/
     __init__.py
@@ -97,7 +99,6 @@ polls/
 </pre>
 
 En este urls.py (dentro de polls), incluímos el siguiente código:
-
 ```
 from django.urls import path
 
@@ -107,6 +108,7 @@ urlpatterns = [
     path('', views.index, name='index'),
 ]
 ```
+
 Del directorio actual, importame views (vistas). Entonces cuando visites localhost:8000/polls/ vas a ejecutar el index del view. Pero esto no acaba aquí, ahora estas urls hay que incluirlas en las urls generales (mysite/urls.py), nos quedaría el siguiente código:
 ```
 from django.contrib import admin
@@ -117,11 +119,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 ```
+
 Con include podemos hacer referencia a otras URLS de otros proyectos. Así podemos hacer fácilmente un plug and play de urls. Ahora ejecutamos runserver y entramos en localhost:8000/polls/ y veremos el "hola mundo".
 ```
 python manage.py runserver 
 ```
-
 
 ### --- PARTE 2 ---
 ### TIME ZONE
@@ -137,6 +139,7 @@ CREATE DATABASE mysite; //NB BASE DE DATOS
 CREATE USER 'user_mysite'@'localhost' IDENTIFIED BY '123456'; //NB USUARIO - CONTRASEÑA (IDENTIFIED)
 GRANT ALL PRIVILEGES ON mysite.* TO 'user_mysite'@'localhost' WITH GRANT OPTION; //CONCEDER TODOS LOS PRIVILEGIOS AL USUARIO user_mysite SOBRE LA BASE DE DATOS mysite
 ```
+
 Una vez hecho esto, vamos a configurar esto en Django. Nos vamos a mysite/settings.py y nos vamos a la sección de DATABASES. Deberemos meter el siguiente código:
 ```
 DATABASES = {
@@ -150,14 +153,17 @@ DATABASES = {
     }
 }
 ```
+
 Ahora que hemos realizado cambios en el acceso a la base de datos Y CADA VEZ QUE HAGAMOS CAMBIOS EN LOS MODELOS DE LA BASE DE DATOS. tenemos que hacer una migración, para que Django nos cree las tablas correspondientes en nuestra base de datos:
 ```
 python manage.py migrate
 ```
+
 **Podemos también migrar únicamente aplicaciones/carpetas en específico (en este caso no es necesario):**
 ```
 python manage.py migrate [polls]
 ```
+
 Una vez hechas las migraciones, podremos comprobar en nuestra base de datos que se han creado las nuevas tablas de DJango.
 ```
 show tables;
@@ -180,6 +186,7 @@ class Choice(models.Model):
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 ```
+
 Más info sobre modelos: https://docs.djangoproject.com/en/4.1/topics/db/models/ <br>
 Bien, con esto ya tendríamos los modelos definidos. **Ahora necesitamos activar estos modelos, incluir esta app en nuestro proyecto (polls en mysite)**. Para ello nos vamos a mysite/settings.py y añadimos al array de INSTALLED_APPS el valor 'polls.apps.PollsConfig', este valor sale de polls/apps.py. Nos quedaría el siguiente código:
 ```
@@ -193,10 +200,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 ```
+
 Ahora Django sabe que tiene que incluir la app polls. Haremos otro comando (migración):
 ```
 python manage.py makemigrations polls
 ```
+
 Deberemos ver algo similar a esto:
 ```
 Migrations for 'polls':
@@ -204,6 +213,7 @@ Migrations for 'polls':
     - Create model Question
     - Create model Choice
 ```
+
 Haciendo esto le estás diciendo a Django que has hecho cambios en los modelos (en este caso has creado nuevos). Y que te gustaría guardar esos cambios como una migración.<br>
 Volvemos a hacer una migración:
 ```
@@ -212,6 +222,7 @@ python manage.py migrate
 ```
 python manage.py migrate [polls]
 ```
+
 Esto nos crea las nuevas tablas de los modelos en la base de datos.
 
 ### Jugando con la API
