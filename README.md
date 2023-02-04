@@ -2,7 +2,7 @@
 
 Django corriendo en Ubuntu 22.04. Pasos de todo lo necesario para la instalación, creación de proyecto, etc.
 
-## INSTALACIÓN (DE TODO LO NECESARIO)
+## ---------------- INSTALACIÓN (DE TODO LO NECESARIO) ----------------
 ### APT UPDATE (ANTES DE NADA)
 ```
 sudo apt-get update
@@ -46,7 +46,7 @@ pip install mysqlclient
 pip install django-extensions
 ```
 
-## CREACIÓN DEL PROYECTO
+## ---------------- CREACIÓN DEL PROYECTO ----------------
 ### Creamos el proyecto 
 Comprobamos que funcione, ejecutamos los siguientes comandos y entramos a localhost:8000 en el navegador. Nos tiene que salir el cohete.
 ```
