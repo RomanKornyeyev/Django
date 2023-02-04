@@ -14,7 +14,7 @@ sudo apt-get install python3-pip
 
 ### DJANGO
 ```
-[sudo] pip3 install django
+pip3 install django
 sudo apt install python3-django
 ```
 
@@ -29,7 +29,7 @@ python --version
 python -m django --version
 ```
 
-**Si no se ha hecho la instalación con sudo, añadir un directorio a la variable path del sistema (poner al final de este archivo)**
+**Si no se ha hecho la instalación con sudo (recomendado hacerlo sin sudo), añadir un directorio a la variable path del sistema (poner al final de este archivo)**
 ```
 gedit ~/.bashrc
 ```
@@ -39,7 +39,6 @@ export PATH
 ```
 
 ### PYTHON (TODO LO NECESARIO)
-Sin root, da igual la carpeta:
 ```
 sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 sudo apt-get install python3-dev default-libmysqlclient-dev libzstd-dev
@@ -47,13 +46,45 @@ pip install mysqlclient
 pip install django-extensions
 ```
 
---- creacion proyecto:
-
+## CREACIÓN DEL PROYECTO
+### Creamos el proyecto 
+Comprobamos que funcione, ejecutamos los siguientes comandos y entramos a localhost:8000 en el navegador. Nos tiene que salir el cohete.
+```
 django-admin startproject mysite
+cd mysite
+python manage.py runserver (lo ejecutamos al mismo nivel que manage.py)
+```
+### creamos nuestra primera app
+Paramos el server con ctrl+c y ejecutamos este comando:
+```
+python manage.py startapp polls (lo ejecutamos al mismo nivel que manage.py)
+```
+**Creamos nuestra primera vista (hola mundo)**
+copiamos y pegamos esto en views:
+```
+from django.shortcuts import render
+from django.http import HttpResponse
 
-python manage.py runserver (dentro de mysite (1ero))
 
-python manage.py startapp polls (dentro de mysite (1ero))
+def index(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
+```
+Para llamar a esta vista, NECESITAMOS MAPEAR ESTO A UNA URL. Creamos un urls.py en polls, con lo que nos queda esta jerarquía:
+
+```
+polls/
+    __init__.py
+    admin.py
+    apps.py
+    migrations/
+        __init__.py
+    models.py
+    tests.py
+    urls.py
+    views.py
+```
+
+
 
 
 python manage.py runserver (dentro de mysite (1ero)) y visitar localhost:8000/polls/
@@ -76,6 +107,3 @@ python manage.py migrate polls(sí, otra vez)
 
 python manage.py createsuperuser (donde esta el fichero manage.py)
 se accede con localhost:8000/admin (en el navegador)
-
-
-ESTO ES UNA PRUEBA
