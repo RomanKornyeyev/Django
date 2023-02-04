@@ -78,3 +78,4 @@ python manage.py createsuperuser (donde esta el fichero manage.py)
 se accede con localhost:8000/admin (en el navegador)
 
 
+ESTO ES UNA PRUEBA
