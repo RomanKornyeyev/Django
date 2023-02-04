@@ -15,6 +15,7 @@ sudo apt-get install python3-pip
 ### DJANGO
 ```
 [sudo] pip3 install django
+sudo apt install python3-django
 ```
 
 **cada vez que escribas python, ejecute python3:**
