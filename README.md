@@ -124,6 +124,12 @@ python manage.py runserver
 
 
 ### --- PARTE 2 ---
+### TIME ZONE
+Antes de seguir modificando el settings.py, estableceremos la zona horaria acorde a nuestra zona horaria (genius), en este caso, Madrid.
+```
+TIME_ZONE = 'Europe/Madrid'
+```
+
 ### Configuración de base de datos
 Usaremos mariadb como base de datos. Antes de nada, deberemos crear una nueva base de datos en nuestro gestor, accedemos al gestor como root y creamos una base de datos, un usuario y le concedemos privilegios de lectura/escritura al usuario sobre la base de datos. Para ello, ejecutaremos los siguientes comandos:
 ```
@@ -131,24 +137,150 @@ CREATE DATABASE mysite; //NB BASE DE DATOS
 CREATE USER 'user_mysite'@'localhost' IDENTIFIED BY '123456'; //NB USUARIO - CONTRASEÑA (IDENTIFIED)
 GRANT ALL PRIVILEGES ON mysite.* TO 'user_mysite'@'localhost' WITH GRANT OPTION; //CONCEDER TODOS LOS PRIVILEGIOS AL USUARIO user_mysite SOBRE LA BASE DE DATOS mysite
 ```
-
-
-
-
-
-
-
-python3 manage.py migrate
-
-en mysql:
-use mysite;
+Una vez hecho esto, vamos a configurar esto en Django. Nos vamos a mysite/settings.py y nos vamos a la sección de DATABASES. Deberemos meter el siguiente código:
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mysite',
+        'USER': 'user_mysite',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+```
+Ahora que hemos realizado cambios en el acceso a la base de datos Y CADA VEZ QUE HAGAMOS CAMBIOS EN LOS MODELOS DE LA BASE DE DATOS. tenemos que hacer una migración, para que Django nos cree las tablas correspondientes en nuestra base de datos:
+```
+python manage.py migrate
+```
+**Podemos también migrar únicamente aplicaciones/carpetas en específico (en este caso no es necesario):**
+```
+python manage.py migrate [polls]
+```
+Una vez hechas las migraciones, podremos comprobar en nuestra base de datos que se han creado las nuevas tablas de DJango.
+```
 show tables;
 desc django_session;
+```
 
+### Creación de modelos
+Crearemos los modelos (tablas de BD), nos iremos a polls/models.py y pondremos el siguiente código (este es de ejemplo):
+```
+from django.db import models
+
+
+class Question(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('date published')
+
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice_text = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+```
+Más info sobre modelos: https://docs.djangoproject.com/en/4.1/topics/db/models/ <br>
+Bien, con esto ya tendríamos los modelos definidos. **Ahora necesitamos activar estos modelos, incluir esta app en nuestro proyecto (polls en mysite)**. Para ello nos vamos a mysite/settings.py y añadimos al array de INSTALLED_APPS el valor 'polls.apps.PollsConfig', este valor sale de polls/apps.py. Nos quedaría el siguiente código:
+```
+INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+Ahora Django sabe que tiene que incluir la app polls. Haremos otro comando (migración):
+```
 python manage.py makemigrations polls
-python manage.py migrate polls(sí, otra vez)
-#esto crea tablas nuevas en la BD, por tanto hay que tener bien el user y password en settings.py
+```
+Deberemos ver algo similar a esto:
+```
+Migrations for 'polls':
+  polls/migrations/0001_initial.py
+    - Create model Question
+    - Create model Choice
+```
+Haciendo esto le estás diciendo a Django que has hecho cambios en los modelos (en este caso has creado nuevos). Y que te gustaría guardar esos cambios como una migración.<br>
+Volvemos a hacer una migración:
+```
+python manage.py migrate 
+```
+```
+python manage.py migrate [polls]
+```
+Esto nos crea las nuevas tablas de los modelos en la base de datos.
+
+### Jugando con la API
+Me lo voy a saltar, dejaré solamente unos comandos core:
+```
+>>> from polls.models import Choice, Question  # Import the model classes we just wrote.
+
+# No questions are in the system yet.
+>>> Question.objects.all()
+<QuerySet []>
+
+# Create a new Question.
+# Support for time zones is enabled in the default settings file, so
+# Django expects a datetime with tzinfo for pub_date. Use timezone.now()
+# instead of datetime.datetime.now() and it will do the right thing.
+>>> from django.utils import timezone
+>>> q = Question(question_text="What's new?", pub_date=timezone.now())
+
+# Save the object into the database. You have to call save() explicitly.
+>>> q.save()
+
+# Now it has an ID.
+>>> q.id
+1
+
+# Access model field values via Python attributes.
+>>> q.question_text
+"What's new?"
+>>> q.pub_date
+datetime.datetime(2012, 2, 26, 13, 0, 0, 775217, tzinfo=datetime.timezone.utc)
+
+# Change values by changing the attributes, then calling save().
+>>> q.question_text = "What's up?"
+>>> q.save()
+
+# objects.all() displays all the questions in the database.
+>>> Question.objects.all()
+<QuerySet [<Question: Question object (1)>]>
+```
+
+Por defecto los objetos nos devuelven "Question object (1)", para modificar esto, símplemente le metemos un "to.String" a los modelos:
+```
+def __str__(self):
+        return self.question_text
+```
+
+### Django admin
+Antes de nada, tendremos que crear un usuario que administre la aplicación.
+```
+python manage.py createsuperuser
+```
+
+Seguimos los pasos que nos marca el shell, establecemos el nombre, correo y contraseña y listo.<br>
+**Ejecutamos el servidor y entramos en localhost:8000/admin en el navegador.**
+```
+python manage.py runserver
+```
+
+Nos logueamos y deberíamos ver el dashboard. Pero... este dashboard no tiene las tablas de los modelos de nuestra aplicación (polls) ¿Cómo las añadimos?
+
+**Haremos que la app polls sea modificable en admin, importando los modelos en el fichero polls/admin.py:**
+```
+from django.contrib import admin
+from .models import Question
+
+admin.site.register(Question)
+```
+
+Ahora podremos añadir datos a nuestros modelos/tablas.
 
 
-python manage.py createsuperuser (donde esta el fichero manage.py)
-se accede con localhost:8000/admin (en el navegador)
+### --- PARTE 3 ---
