@@ -266,7 +266,7 @@ datetime.datetime(2012, 2, 26, 13, 0, 0, 775217, tzinfo=datetime.timezone.utc)
 Por defecto los objetos nos devuelven "Question object (1)", para modificar esto, símplemente le metemos un "to.String" a los modelos:
 ```
 def __str__(self):
-        return self.question_text
+    return self.question_text
 ```
 
 ### Django admin
@@ -295,3 +295,5 @@ Ahora podremos añadir datos a nuestros modelos/tablas.
 
 
 ### --- PARTE 3 ---
+
+a
