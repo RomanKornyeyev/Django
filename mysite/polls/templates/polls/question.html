@@ -1,0 +1,11 @@
+{% extends 'mysite/base.html' %}
+
+
+{% block title %}
+    Detalle: {{ preguntaTemplate.question_text }}
+{% endblock %}
+
+
+{% block content %}
+<p>{{ preguntaTemplate.question_text }}</p>
+{% endblock %}

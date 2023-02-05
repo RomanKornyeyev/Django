@@ -1,0 +1,11 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %}
+    Listado questions
+{% endblock %}
+
+{% block content %}
+    {% for question in questions %}
+        <a href="{% url 'polls_detalle_question' question.question_text %}">{{ question }}</a>
+    {% endfor %}
+{% endblock %}

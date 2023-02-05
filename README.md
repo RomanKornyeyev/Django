@@ -223,7 +223,42 @@ python manage.py migrate
 python manage.py migrate [polls]
 ```
 
-Esto nos crea las nuevas tablas de los modelos en la base de datos.
+Esto nos crea las nuevas tablas de los modelos en la base de datos.<br>
+
+Para poder meter imágenes a los modelos, tendremos que hacer una ñapilla, añadiendo un método estático y una ruta a settings. Abrimos settings.py y metemos el siguiente código al final del todo:
+```
+#absoluta
+#MEDIA_ROOT='/home/roman/Django/mysite/media'
+
+#relativa
+MEDIA_ROOT=BASE_DIR / 'media'
+MEDIA_URL='media/'
+```
+
+Abrimos mysite/urls.py, importamos lo necesario y metemos este método estático al final de urlpatterns:
+```
+from django.conf.urls.static import static
+from django.conf import settings
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+Quedándonos este código:
+```
+from django.contrib import admin
+from django.urls import include, path
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns = [
+    path('polls/', include('polls.urls')),
+    path('admin/', admin.site.urls),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+Y por último, para meter las imágenes en los modelos, nos bastaría con meter esta línea:
+```
+foto1 = models.ImageField(upload_to='question', blank=True)
+```
+upload_to va a coger la ruta que tenemos definida para el contenido multimedia, en este caso, mysite/media, es decir, media estaría al mismo nivel que manage.py y al poner ='question', nos crearía una carpeta question dentro de esa carpeta media.
 
 ### Jugando con la API
 Me lo voy a saltar, dejaré solamente unos comandos core:
@@ -295,5 +330,112 @@ Ahora podremos añadir datos a nuestros modelos/tablas.
 
 
 ### --- PARTE 3 ---
+### Creando vistas (medianamente interesantes)
+Aquí me voy a desviar ligeralmente del tutorial para seguir la estructura de clase. Quiero conseguir algo simple, un index con todas las entradas de blog (Questions en este caso) y representarlas en una lista. También cada Question tendrá un link para llevarte al detalle.<br><br>
+Teniendo en cuenta lo anteriormente comentado, procedemos a hacer las vistas (polls/views.py):
+```
+from django.shortcuts import render
+from django.template import loader
+from django.http import HttpResponse
+from .models import Question, Choice
 
-a
+def index(request):
+    questions = Question.objects.all()
+    context = {'questions': questions}
+    return render(request, 'polls/index.html', context)
+
+def detalle_question(request, question_text):
+    preguntaORM = Question.objects.get(question_text=question_text)
+    context = {'preguntaTemplate': preguntaORM}
+    return render(request, 'polls/question.html', context)
+```
+
+Una vez hecho esto, las linkeamos en las urls (polls/urls.py):
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='polls_index'),
+    path('<str:question_text>/', views.detalle_question, name='polls_detalle_question')
+]
+```
+
+### Templates
+Para renderizar las vistas, hacen falta templates (plantillas HTML predefinidas para pintar el contenido de una forma organizada y jerarquizada en la web).<br><br>
+Antes de nada, nos vamos a crear la plantilla base, que llevará el head y el body de la página. Realizamos esta jerarquía en mysite (mysite/mysite) templates/mysite/base.html y le metemos la plantilla básica de HTML:
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+```
+Con los bloques definimos donde se pinta cada contenido.<br>
+Una vez hecho esto, debemos irnos a settings.py y añadir varias filas a INSTALLED_APPS para que pueda reconocer esta ruta de templates y de paso añadimos django_extensions:
+```
+'django_extensions',
+'mysite',
+```
+Quedándonos el siguiente código:
+```
+INSTALLED_APPS = [
+    'django_extensions',
+    'mysite',
+    'polls.apps.PollsConfig',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
+Bien acto seguido creamos la siguiente jerarquía **en polls**: templates/polls/index.html y metemos el siguiente código en index.html y metemos el siguiente código:
+```
+{% extends 'mysite/base.html' %}
+
+{% block title %}
+    Listado questions
+{% endblock %}
+
+{% block content %}
+    {% for question in questions %}
+        <a href="{% url 'polls_detalle_question' question.question_text %}">{{ question }}</a>
+    {% endfor %}
+{% endblock %}
+```
+**BIEN, PAUSA,** aquí están pasando muchas cosas.
+
+1. Este template extends de mysite/base.html, es decir, hereda TODO lo de la plantilla base.html, por tanto, solamente deberemos pintar el contenido separado por bloques.
+2. ¿¿De donde sale **for question in questions**?? questions en este caso es una variable cargada del ORM y básicamente es un array con TODOS los objetos del modelo Question.
+3. **URL**
+   - **¿Qué es polls_detalle_question?** Es el name del path del polls/urls.py
+   - **¿Qué es question.question_text?** question es la variable del for, un objeto del modelo Question. Lo que hacemos es seleccionar question_text de question. Es como si hiciesemos user.nombre (en este caso seleccionariamos el nombre del usuario). Y lo pasamos como parámetro a la URL 'polls_detalle_question', para que la reciba y pinte información de esta question en concreto.
+
+Bien, aclarado esto, nos quedaría hacer el template de la página de detalle y listo. Creamos otro template **en polls**: templates/polls/question.html y metemos el siguiente código:
+```
+{% extends 'mysite/base.html' %}
+
+
+{% block title %}
+    Detalle: {{ preguntaTemplate.question_text }}
+{% endblock %}
+
+
+{% block content %}
+<p>{{ preguntaTemplate.question_text }}</p>
+{% endblock %}
+```
+
+Y listo, con esto concluiríamos este pequeño proyecto de noticias.
