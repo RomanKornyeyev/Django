@@ -5,8 +5,16 @@
 {% endblock %}
 
 {% block content %}
-    
-    {% for noticia in noticiasTemplate %}
-        <a href="{% url 'noticias_detalle' noticia.titulo %}">{{ noticia }}</a><br>
-    {% endfor %}
+    <div class="container d-flex flex-wrap align-items-center justify-content-center gap-4 p-4" style="background-color: #eaeaea; box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);">
+        {% for noticia in noticiasTemplate %}
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{ noticia.foto1.url }}" alt="Card image cap">
+                <div class="card-body">
+                <h5 class="card-title">{{ noticia.titulo }}</h5>
+                <p class="card-text">{{ noticia.descripcion }}</p>
+                <a href="{% url 'noticias_detalle' noticia.titulo %}" class="btn btn-primary">Ver más</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

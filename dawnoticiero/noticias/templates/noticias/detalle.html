@@ -5,37 +5,50 @@
 Detalle: {{ noticiaTemplate.titulo }}
 {% endblock %}
 
+{% block styles %}
+<style>
+    .carousel-item{
+        width: 100%;
+        height: 300px;
+        border: 1px solid black;
+    }
+    .carousel-item>img{
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    
-    <div class="card text-start">
-        <div id="carousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: 100%; object-fit: cover;">
-            <div class="carousel-inner" role="listbox">
-                {% for foto in noticiaTemplate.getImages %}
-                    {% if foto %}
-                        <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
-                            <img src="{{ foto.url }}" class="w-100 d-block" alt="imagen {{ forloop.counter }}">
-                        </div>
-                    {% endif %}
-                {% endfor %}
+    <div class="container mt-5">
+        <div class="card text-start">
+            <div id="carousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="carousel-inner" role="listbox">
+                    {% for foto in noticiaTemplate.getImages %}
+                        {% if foto %}
+                            <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
+                                <img src="{{ foto.url }}" class="w-100 d-block" alt="imagen {{ forloop.counter }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+            <div class="card-body">
+                <h4 class="card-title">{{ noticiaTemplate.titulo }}</h4>
+                <p class="card-text">{{ noticiaTemplate.descripcion }}</p>
+            </div>
         </div>
-      <div class="card-body">
-        <h4 class="card-title">Title</h4>
-        <p class="card-text">Body</p>
-      </div>
+        <br>
+        <a href="{% url 'noticias_index' %}" class="btn btn-primary">Volver al inicio</a>
     </div>
-    
-
-    <h1>{{ noticiaTemplate.titulo }}</h1>
-    <p>{{ noticiaTemplate.descripcion }}</p>
 
 {% endblock %}
