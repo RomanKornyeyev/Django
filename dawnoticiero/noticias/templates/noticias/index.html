@@ -1,0 +1,12 @@
+{% extends 'dawnoticiero/base.html' %}
+
+{% block title %}
+    Listado noticias
+{% endblock %}
+
+{% block content %}
+    
+    {% for noticia in noticiasTemplate %}
+        <a href="{% url 'noticias_detalle' noticia.titulo %}">{{ noticia }}</a><br>
+    {% endfor %}
+{% endblock %}
