@@ -15,3 +15,5 @@ class Noticia(models.Model):
     def __str__(self):
         return f"{self.titulo} ({self.fecha})"
     
+    def getImages(self):
+        return [self.foto1, self.foto2, self.foto3, self.foto4, self.foto5]

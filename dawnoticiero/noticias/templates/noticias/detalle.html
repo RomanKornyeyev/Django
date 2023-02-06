@@ -7,64 +7,35 @@ Detalle: {{ noticiaTemplate.titulo }}
 
 
 {% block content %}
-    <a href="{% url 'noticias_index' %}"> Volver al inicio </a><br>
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="width: 500px; height: 500px;">
-        <ol class="carousel-indicators">
-            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img class="d-block w-100" src="{{noticiaTemplate.foto1.url}}" alt="First slide">
+    
+    <div class="card text-start">
+        <div id="carousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="carousel-inner" role="listbox">
+                {% for foto in noticiaTemplate.getImages %}
+                    {% if foto %}
+                        <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
+                            <img src="{{ foto.url }}" class="w-100 d-block" alt="imagen {{ forloop.counter }}">
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
-            <div class="carousel-item">
-                <img class="d-block w-100" src="{{noticiaTemplate.foto2.url}}" alt="Second slide">
-            </div>
-            <div class="carousel-item">
-                <img class="d-block w-100" src="{{noticiaTemplate.foto3.url}}" alt="Third slide">
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+      <div class="card-body">
+        <h4 class="card-title">Title</h4>
+        <p class="card-text">Body</p>
+      </div>
     </div>
+    
 
     <h1>{{ noticiaTemplate.titulo }}</h1>
     <p>{{ noticiaTemplate.descripcion }}</p>
 
-
-    <div class="container">
-        <div class="row noticia mx-auto my-5 g-2 position-relative">
-            <div class="col">
-                <h2>{{ noticia.titulo }}</h2>
-                <p>{{ noticia.desc }}</p>
-    
-                <div id="carousel{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner" role="listbox">
-                        {% for image in noticia.getImages %}
-                            {% if image %}
-                                <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
-                                    <img src="{{ image.url }}" class="w-100 d-block" alt="imagen {{ forloop.counter }}">
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ forloop.counter }}" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ forloop.counter }}" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
