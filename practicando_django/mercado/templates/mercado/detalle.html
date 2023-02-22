@@ -1,0 +1,16 @@
+{% extends 'practicando_django/base.html' %}
+{% block title %}Detalle{% endblock %}
+
+{% block content %}
+    <h1>{{pregunta}}</h1>
+
+    <form action="{% url 'mercado:votos' pregunta.id %}" method="post">
+        {% csrf_token %}
+        {% if error %}<p>{{error}}</p>{% endif %}
+        {% for value in opciones %}
+            <input type="radio" name="opcion" value="{{value.id}}">
+            {{value}}
+        {% endfor %}
+        <input type="submit" value="enviar">
+    </form>
+{% endblock %}

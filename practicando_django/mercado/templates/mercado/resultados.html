@@ -1,0 +1,11 @@
+{% extends 'practicando_django/base.html' %}
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+    <h1>{{pregunta}}</h1>
+    {% for value in opciones %}
+
+        <h2>{{value}}: {{value.votes}}</h2>
+
+    {% endfor %}
+{% endblock %}

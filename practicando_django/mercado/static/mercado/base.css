@@ -1,0 +1,9 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.main{
+    background-color: #eaeaea;
+}
+h1,h2,h3,hr{margin-bottom: 15px;}
