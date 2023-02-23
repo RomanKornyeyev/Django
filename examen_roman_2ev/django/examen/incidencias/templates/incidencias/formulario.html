@@ -1,0 +1,8 @@
+<h1>{{estacion.nombre}} ({{linea.nombre}})</h1>
+<form action="{% url 'incidencias:envio' linea.id estacion.id %}" method="post">
+    {% csrf_token %}
+    {% if error %}<p>{{error}}</p>{% endif %}
+    <input type="text" name="texto">
+        
+    <input type="submit" value="enviar">
+</form>

@@ -1,0 +1,17 @@
+{% extends 'misitio/base.html' %}
+{% block title %}INDEX{% endblock %}
+
+<h1>INDEX</h1><hr>
+
+{% block content %}
+    {% for value in bibliotecas %}
+
+        <a href="{% url 'aplicacion:detalle' value.id %}">
+            <h2>{{ value.nombre }}</h2>
+        </a>
+        <p>{{ value.direccion }}</p>
+        <img src="{{ value.foto.url }}" alt="img">
+        <hr>
+
+    {% endfor %}
+{% endblock %}

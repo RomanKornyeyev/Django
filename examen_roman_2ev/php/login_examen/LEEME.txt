@@ -1,0 +1,4 @@
+1: para mayor comodidad, usaré varios recursos, dentro de la carpeta src
+
+2: controlo la página anterior mediante src/paginaAnterior.php, no por la URL, esto tiene la ventaja de que si has introducido
+mal la contraseña una vez, NO se pierde la última url que visitaste y considero que es mejor así.

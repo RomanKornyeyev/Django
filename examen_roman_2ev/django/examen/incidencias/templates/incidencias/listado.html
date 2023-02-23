@@ -1,0 +1,5 @@
+{% for linea in lineas %}
+    {% for estacion in estaciones %}
+        {{ linea.nombre }} - {{ estacion.nombre }} <a href="{% url 'incidencias:formulario' linea.id estacion.id %}">+ Nueva incidencia</a><br>
+    {% endfor %}
+{% endfor %}
