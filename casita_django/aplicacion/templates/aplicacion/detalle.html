@@ -1,0 +1,12 @@
+<h1>{{pregunta.question_text}}</h1>
+<form action="{% url 'aplicacion:votos' pregunta.id %}" method="post">
+    {% csrf_token %}
+        {% if error %}<p>{{error}}</p>{% endif %}
+    {% for value in opciones %}
+        {{value}}<input type="radio" name="opcion" value="{{value.id}}"><br>
+    {% endfor %}
+    <input type="submit" value="vota">
+</form>
+
+<a href="{% url 'aplicacion:index' %}">volver al index</a>
+

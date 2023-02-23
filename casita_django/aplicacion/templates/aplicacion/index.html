@@ -1,0 +1,12 @@
+<h1>INDEX</h1><hr><br>
+
+{% for value in preguntas %}
+
+    <a href="{% url 'aplicacion:detalle' value.id %}">
+        <h2>{{value.question_text}}</h2>
+    </a>
+    <img src="{{value.imagen.url}}" alt="img">
+    <h2>{{value.pub_date}}</h2>
+    <hr>
+
+{% endfor %}

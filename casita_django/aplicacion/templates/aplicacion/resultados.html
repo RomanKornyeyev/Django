@@ -1,0 +1,7 @@
+<h1>{{pregunta}}</h1>
+{% for value in opciones %}
+
+    <h2>{{value}}: {{value.votes}}</h2>
+
+{% endfor %}
+<a href="{% url 'aplicacion:index' %}">volver al index</a>
